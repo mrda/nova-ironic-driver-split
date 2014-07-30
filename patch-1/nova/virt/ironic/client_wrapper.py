@@ -25,6 +25,7 @@ from nova import exception
 from nova.openstack.common import gettextutils
 from nova.openstack.common import log as logging
 
+
 LOG = logging.getLogger(__name__)
 CONF = cfg.CONF
 
