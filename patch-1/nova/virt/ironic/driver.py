@@ -21,7 +21,56 @@ A driver wrapping the Ironic API, such that Nova may provision
 bare metal resources.
 """
 
+from oslo.config import cfg
+
 from nova.virt import driver as virt_driver
+
+
+opts = [
+    cfg.IntOpt('api_version',
+               default=1,
+               help='Version of Ironic API service endpoint.'),
+    cfg.StrOpt('api_endpoint',
+               help='URL for Ironic API endpoint.'),
+    cfg.StrOpt('admin_username',
+               help='Ironic keystone admin name'),
+    cfg.StrOpt('admin_password',
+               help='Ironic keystone admin password.'),
+    cfg.StrOpt('admin_auth_token',
+               help='Ironic keystone auth token.'),
+    cfg.StrOpt('admin_url',
+               help='Keystone public API endpoint.'),
+    cfg.StrOpt('client_log_level',
+               help='Log level override for ironicclient. Set this in '
+                    'order to override the global "default_log_levels", '
+                    '"verbose", and "debug" settings.'),
+    cfg.StrOpt('pxe_bootfile_name',
+               help='This gets passed to Neutron as the bootfile dhcp '
+               'parameter when the dhcp_options_enabled is set.',
+               default='pxelinux.0'),
+    cfg.StrOpt('admin_tenant_name',
+               help='Ironic keystone tenant name.'),
+    cfg.ListOpt('instance_type_extra_specs',
+                default=[],
+                help='A list of additional capabilities corresponding to '
+                'instance_type_extra_specs for this compute '
+                'host to advertise. Valid entries are name=value, pairs '
+                'For example, "key1:val1, key2:val2"'),
+    cfg.IntOpt('api_max_retries',
+               default=60,
+               help=('How many retries when a request does conflict.')),
+    cfg.IntOpt('api_retry_interval',
+               default=2,
+               help=('How often to retry in seconds when a request '
+                     'does conflict')),
+    ]
+
+ironic_group = cfg.OptGroup(name='ironic',
+                            title='Ironic Options')
+
+CONF = cfg.CONF
+CONF.register_group(ironic_group)
+CONF.register_opts(opts, ironic_group)
 
 
 class IronicDriver(virt_driver.ComputeDriver):
