@@ -32,7 +32,7 @@ from nova import exception
 from nova.objects import flavor as flavor_obj
 from nova.objects import instance as instance_obj
 from nova.openstack.common import excutils
-from nova.openstack.common.gettextutils import _, _LW
+from nova.openstack.common import gettextutils
 from nova.openstack.common import jsonutils
 from nova.openstack.common import log as logging
 from nova.openstack.common import loopingcall
@@ -41,6 +41,9 @@ from nova.virt import firewall
 from nova.virt.ironic import client_wrapper
 from nova.virt.ironic import ironic_states
 from nova.virt.ironic import patcher
+
+_ = gettextutils._
+_LW = gettextutils._LW
 
 LOG = logging.getLogger(__name__)
 

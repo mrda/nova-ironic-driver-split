@@ -26,13 +26,12 @@ from ironicclient import exc as ironic_exception
 from oslo.config import cfg
 
 from nova.compute import power_state
-from nova.compute import task_states
 from nova import context as nova_context
 from nova import exception
 from nova.objects import flavor as flavor_obj
 from nova.objects import instance as instance_obj
 from nova.openstack.common import excutils
-from nova.openstack.common.gettextutils import _, _LW
+from nova.openstack.common import gettextutils
 from nova.openstack.common import jsonutils
 from nova.openstack.common import log as logging
 from nova.openstack.common import loopingcall
@@ -40,7 +39,9 @@ from nova.virt import driver as virt_driver
 from nova.virt import firewall
 from nova.virt.ironic import client_wrapper
 from nova.virt.ironic import ironic_states
-from nova.virt.ironic import patcher
+
+_ = gettextutils._
+_LW = gettextutils._LW
 
 LOG = logging.getLogger(__name__)
 
@@ -128,6 +129,21 @@ def validate_instance_and_node(icli, instance):
 def _get_nodes_supported_instances(cpu_arch=''):
     """Return supported instances for a node."""
     return [(cpu_arch, 'baremetal', 'baremetal')]
+
+
+def _log_ironic_polling(what, node, instance):
+    prov_state = (None if node.provision_state is None else
+                  '"%s"' % node.provision_state)
+    tgt_prov_state = (None if node.target_provision_state is None else
+                      '"%s"' % node.target_provision_state)
+    LOG.debug('Still waiting for ironic node %(node)s to %(what)s: '
+              'provision_state=%(prov_state)s, '
+              'target_provision_state=%(tgt_prov_state)s',
+              dict(what=what,
+                   node=node.uuid,
+                   prov_state=prov_state,
+                   tgt_prov_state=tgt_prov_state),
+              instance=instance)
 
 
 class IronicDriver(virt_driver.ComputeDriver):
@@ -618,4 +634,3 @@ class IronicDriver(virt_driver.ComputeDriver):
             data = self._node_resource(node)
             caps.append(data)
         return caps
-

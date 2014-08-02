@@ -22,7 +22,6 @@ import mock
 from oslo.config import cfg
 
 from nova.compute import power_state as nova_states
-from nova.compute import task_states
 from nova import context as nova_context
 from nova import exception
 from nova.objects import flavor as flavor_obj
@@ -35,7 +34,6 @@ from nova.tests import fake_instance
 from nova.tests import utils
 from nova.tests.virt.ironic import utils as ironic_utils
 from nova.virt import fake
-from nova.virt import firewall
 from nova.virt.ironic import client_wrapper as cw
 from nova.virt.ironic import driver as ironic_driver
 from nova.virt.ironic import ironic_states
